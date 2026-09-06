@@ -70,6 +70,9 @@
             /* 大卡片金边 */
             .member-big-card{
                 @apply corner-card-base;
+                max-width: var(--card-max-width);
+                margin-left: auto;
+                margin-right: auto;
             }
             .member-big-card::before,
             .member-big-card::after,
@@ -83,6 +86,10 @@
             .member-big-card::after { border-bottom: 2px solid; border-right: 2px solid; }
             .member-big-card .corner-tr { border-top: 2px solid; border-right: 2px solid; }
             .member-big-card .corner-bl { border-bottom: 2px solid; border-left: 2px solid; }
+            .big-card-inner-grid {
+                display: grid;
+                grid-template-columns: var(--left-width) 1fr;
+            }
             /* 小卡片金边 */
             .member-small-card{
                 @apply corner-card-base;
@@ -99,6 +106,7 @@
             .member-small-card::after { border-bottom: 1.5px solid; border-right: 1.5px solid; }
             .member-small-card .corner-tr-sm { @apply corner-tr; border-top:1.5px solid; border-right:1.5px solid; }
             .member-small-card .corner-bl-sm { @apply corner-bl; border-bottom:1.5px solid; border-left:1.5px solid; }
+
             /* ========== 悬浮淡入淡出替换图片 ========== */
             .hover-img-wrap {
                 position: relative;
@@ -128,6 +136,14 @@
             .hover-img-wrap:hover .img-back {
                 opacity:1;
             }
+            /* 禁止翻转卡片：hover不做任何变化 */
+            .hover-img-wrap.no-flip:hover .img-front {
+                opacity:1 !important;
+            }
+            .hover-img-wrap.no-flip:hover .img-back {
+                opacity:0 !important;
+            }
+
             /* 通用区块背景 */
             .section-bg{
                 background: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.65)), var(--bg);
@@ -148,20 +164,10 @@
             .nav-item.active{
                 @apply text-gold;
             }
-            /*轮播样式【整组翻页修复版】*/
-            .carousel-container{
-                overflow:hidden;
-                position:relative;
-                padding: 0 3rem;
-            }
-            .carousel-track{
-                display:flex;
-                transition: transform 0.5s ease-in-out;
-                gap:1rem;
-            }
-            .carousel-item{
-                flex-shrink: 0;
-                width: 280px;
+        }
+        @media (max-width: 767px) {
+            .big-card-inner-grid {
+                grid-template-columns: 1fr !important;
             }
         }
         body {
@@ -212,6 +218,7 @@
         </div>
         <!-- 右上角菜单栏，增加nav-wrap用于定位下划线 -->
         <nav class="hidden md:flex gap-8 text-sm relative" id="navWrap">
+            <a data-target="#hero" class="scroll-link nav-item text-white hover:text-gold transition-colors cursor-pointer">首页</a>
             <a data-target="#intro" class="scroll-link nav-item text-white hover:text-gold transition-colors cursor-pointer">百业简介</a>
             <a data-target="#feature" class="scroll-link nav-item text-white hover:text-gold transition-colors cursor-pointer">诸业风物</a>
             <a data-target="#member" class="scroll-link nav-item text-white hover:text-gold transition-colors cursor-pointer">群英列册</a>
@@ -353,60 +360,82 @@
             <div class="text-gold/60 mt-2">—— 众位同袍 · 共守此业 ——</div>
             <div class="w-32 h-[1px] bg-gold/40 mx-auto mt-3"></div>
         </div>
-        <!-- 社主 大卡片 -->
-        <div class="member-big-card cardBg gold-border rounded-md overflow-hidden backdrop-blur-sm mb-8">
+        <!-- 社主 大卡片 可调整尺寸 -->
+        <div class="member-big-card cardBg gold-border rounded-md overflow-hidden backdrop-blur-sm mb-8"
+             style="--card-max-width: 1200px; --left-width: 340px;">
             <div class="corner-tr"></div>
             <div class="corner-bl"></div>
-            <div class="grid md:grid-cols-3 gap-0">
-                <div class="relative min-h-[320px] bg-gray-800">
+            <div class="big-card-inner-grid gap-0">
+                <!-- 左侧人物图 -->
+                <div class="relative min-h-[420px] bg-gray-800">
                     <div class="absolute top-3 left-3 bg-gold/25 text-gold px-2 py-1 text-xs z-20">社主</div>
                     <div class="hover-img-wrap h-full">
-                        <div class="img-front" style="background-image:url('https://picsum.photos/id/1060/800/800');"></div>
-                        <div class="img-back" style="background-image:url('https://picsum.photos/id/1061/800/800');"></div>
+                        <div class="img-front" style="background-image:url(baishiqian.jpg);"></div>
+                        <div class="img-back" style="background-image:url(baishiqian-1.jpg);"></div>
                     </div>
                 </div>
-                <div class="md:col-span-2 flex flex-col justify-center items-center py-8 px-6">
-                    <div class="px-4 py-2 bg-red-800/60 border border-gold/40 rounded text-gold mb-6">拔剑</div>
-                    <h3 class="text-3xl text-white">柏时迁</h3>
-                    <div class="text-cyanText/70 mt-2">社主 · 牵丝霖</div>
-                    <div class="w-24 h-[1px] bg-gold/40 my-4"></div>
-                    <p class="text-2xl text-gold text-gold-shadow">无</p>
+                <!-- 右侧内容 -->
+                <div class="py-8 px-8 bg-gradient-to-br">
+                    <div class="mb-8">
+                        <div class="inline-block px-4 py-2 bg-red-800/60 border border-gold/40 rounded text-gold">拔剑的意义</div>
+                    </div>
+                    <h3 class="text-3xl text-white text-center">柏时迁</h3>
+                    <div class="text-gold/80 mt-2 text-center">社主 · 牵丝霖</div>
+                    <div class="flex items-center justify-center my-5">
+                        <div class="h-[1px] bg-gold/40 flex-1"></div>
+                        <div class="mx-2 w-2 h-2 rotate-45 bg-gold/60"></div>
+                        <div class="h-[1px] bg-gold/40 flex-1"></div>
+                    </div>
+                    <p class="text-[2rem] text-gold text-gold-shadow text-center mt-10">无</p>
                 </div>
             </div>
         </div>
-        <!-- 副社主 大卡片 -->
-        <div class="member-big-card cardBg gold-border rounded-md overflow-hidden backdrop-blur-sm mb-10">
+        <!-- 副社主 大卡片 同样支持变量调整 -->
+        <div class="member-big-card cardBg gold-border rounded-md overflow-hidden backdrop-blur-sm mb-10"
+             style="--card-max-width: 1200px; --left-width: 340px;">
             <div class="corner-tr"></div>
             <div class="corner-bl"></div>
-            <div class="grid md:grid-cols-3 gap-0">
-                <div class="relative min-h-[320px] bg-gray-800">
+            <div class="big-card-inner-grid gap-0">
+                <div class="relative min-h-[420px] bg-gray-800">
                     <div class="absolute top-3 left-3 bg-gold/25 text-gold px-2 py-1 text-xs z-20">副社主</div>
-                    <div class="hover-img-wrap h-full">
-                        <div class="img-front" style="background-image:url('https://picsum.photos/id/1062/800/800');"></div>
+                    <div class="hover-img-wrap h-full no-flip">
+                        <div class="img-front" style="background-image:url(wanlian.png);"></div>
                         <div class="img-back" style="background-image:url('https://picsum.photos/id/1063/800/800');"></div>
                     </div>
                 </div>
-                <div class="md:col-span-2 flex flex-col justify-center items-center py-8 px-6">
-                    <div class="px-4 py-2 bg-red-800/60 border border-gold/40 rounded text-gold mb-6">拔剑</div>
-                    <h3 class="text-3xl text-white">綄莲</h3>
-                    <div class="text-cyanText/70 mt-2">副社主 · </div>
-                    <div class="w-24 h-[1px] bg-gold/40 my-4"></div>
-                    <p class="text-2xl text-gold text-gold-shadow">无</p>
+                <div class="py-8 px-8 bg-gradient-to-br">
+                    <div class="mb-8">
+                        <div class="inline-block px-4 py-2 bg-red-800/60 border border-gold/40 rounded text-gold">无</div>
+                    </div>
+                    <h3 class="text-3xl text-white text-center">綄莲</h3>
+                    <div class="text-gold/80 mt-2 text-center">副社主 · 鸣金影</div>
+                    <div class="flex items-center justify-center my-5">
+                        <div class="h-[1px] bg-gold/40 flex-1"></div>
+                        <div class="mx-2 w-2 h-2 rotate-45 bg-gold/60"></div>
+                        <div class="h-[1px] bg-gold/40 flex-1"></div>
+                    </div>
+                    <p class="text-[2rem] text-gold text-gold-shadow text-center mt-10">你永远可以相信我</p>
                 </div>
             </div>
         </div>
-        <!-- 普通成员轮播区域 -->
+        <!-- 【分页模式】成员区域 -->
         <div class="relative">
-            <div class="carousel-container">
-                <div class="carousel-track" id="carouselTrack"></div>
-            </div>
-            <!--左右切换按钮-->
-            <button id="prevBtn" class="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 gold-border bg-mainDark/70 text-gold rounded-full flex items-center justify-center hover:bg-gold/25">
+            <!-- 左箭头 -->
+            <button id="prevBtn" class="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 gold-border bg-mainDark/70 text-gold rounded-full flex items-center justify-center hover:bg-gold/25 disabled:opacity-25 disabled:cursor-not-allowed">
                 <i class="fa fa-angle-left"></i>
             </button>
-            <button id="nextBtn" class="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 gold-border bg-mainDark/70 text-gold rounded-full flex items-center justify-center hover:bg-gold/25">
+            <!-- 卡片渲染容器 -->
+            <div class="px-14">
+                <div id="pageMemberWrap" class="grid xl:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-6">
+                    <!-- JS动态渲染当前页4张卡片 -->
+                </div>
+            </div>
+            <!-- 右箭头 -->
+            <button id="nextBtn" class="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 gold-border bg-mainDark/70 text-gold rounded-full flex items-center justify-center hover:bg-gold/25 disabled:opacity-25 disabled:cursor-not-allowed">
                 <i class="fa fa-angle-right"></i>
             </button>
+            <!-- 页码提示 -->
+            <div class="text-center mt-6 text-gold/60 text-sm" id="pageTip"></div>
         </div>
     </div>
 </section>
@@ -466,11 +495,10 @@
                 <div class="text-gold text-xl mb-3">副社ID</div>
                 <div class="flex items-center justify-center gap-2">
                     <input value="WechatID003" readonly class="bg-black/40 border border-gold/30 px-3 py-2 w-44 text-cyanText rounded text-sm">
-                    <button onclick="copyText('WechatID002')" class="px-3 py-2 bg-gold/25 text-gold rounded text-sm">复制</button>
+                    <button onclick="copyText('WechatID003')" class="px-3 py-2 bg-gold/25 text-gold rounded text-sm">复制</button>
                 </div>
             </div>
         </div>
-
         <p class="text-center mt-8 text-gray-400 text-sm">欲入社者，可添加社主或副社主微信，添加时备注“流派、ID”。</p>
     </div>
 </section>
@@ -518,7 +546,7 @@ function setNavActive(activeIndex){
 }
 //检测滚动位置，判断当前可视区块
 function checkScrollActive(){
-    const sections = ['#intro','#feature','#member','#join'];
+    const sections = ['#hero','#intro','#feature','#member','#join'];
     const scrollY = window.scrollY;
     const offsetThreshold = 200;
     let activeIdx = -1;
@@ -535,8 +563,8 @@ function checkScrollActive(){
         setNavActive(activeIdx);
     }
 }
-
 // ========== 普通成员配置数组，新增成员只需要在这里加对象 ==========
+// canFlip: true=允许悬浮图片翻转；false=禁止悬浮翻转
 const members = [
     {
         tag:"无",
@@ -545,7 +573,8 @@ const members = [
         slogan:"无",
         tip:"",
         imgFront:"https://picsum.photos/id/1070/600/600",
-        imgBack:"https://picsum.photos/id/1071/600/600"
+        imgBack:"https://picsum.photos/id/1071/600/600",
+        canFlip: true
     },
     {
         tag:"无",
@@ -554,7 +583,8 @@ const members = [
         slogan:"无",
         tip:"",
         imgFront:"https://picsum.photos/id/1072/600/600",
-        imgBack:"https://picsum.photos/id/1073/600/600"
+        imgBack:"https://picsum.photos/id/1073/600/600",
+        canFlip: false
     },
     {
         tag:"无",
@@ -563,7 +593,8 @@ const members = [
         slogan:"无",
         tip:"",
         imgFront:"https://picsum.photos/id/1074/600/600",
-        imgBack:"https://picsum.photos/id/1075/600/600"
+        imgBack:"https://picsum.photos/id/1075/600/600",
+        canFlip: true
     },
     {
         tag:"无",
@@ -572,7 +603,8 @@ const members = [
         slogan:"无",
         tip:"",
         imgFront:"https://picsum.photos/id/1076/600/600",
-        imgBack:"https://picsum.photos/id/1077/600/600"
+        imgBack:"https://picsum.photos/id/1077/600/600",
+        canFlip: false
     },
     {
         tag:"无",
@@ -581,7 +613,8 @@ const members = [
         slogan:"无",
         tip:"",
         imgFront:"https://picsum.photos/id/1078/600/600",
-        imgBack:"https://picsum.photos/id/1079/600/600"
+        imgBack:"https://picsum.photos/id/1079/600/600",
+        canFlip: true
     },
     {
         tag:"无",
@@ -590,7 +623,8 @@ const members = [
         slogan:"无",
         tip:"",
         imgFront:"https://picsum.photos/id/1079/600/600",
-        imgBack:"https://picsum.photos/id/1080/600/600"
+        imgBack:"https://picsum.photos/id/1080/600/600",
+        canFlip: true
     },
     {
         tag:"无",
@@ -599,7 +633,8 @@ const members = [
         slogan:"无",
         tip:"",
         imgFront:"https://picsum.photos/id/1081/600/600",
-        imgBack:"https://picsum.photos/id/1082/600/600"
+        imgBack:"https://picsum.photos/id/1082/600/600",
+        canFlip: false
     },
     {
         tag:"无",
@@ -608,100 +643,63 @@ const members = [
         slogan:"无",
         tip:"",
         imgFront:"https://picsum.photos/id/1083/600/600",
-        imgBack:"https://picsum.photos/id/1084/600/600"
-    },
-    {
-        tag:"无",
-        name:"无",
-        sub:"无 · ",
-        slogan:"无",
-        tip:"",
-        imgFront:"https://picsum.photos/id/1085/600/600",
-        imgBack:"https://picsum.photos/id/1086/600/600"
+        imgBack:"https://picsum.photos/id/1084/600/600",
+        canFlip: true
     }
 ];
-
-// 轮播变量：groupIndex = 当前组索引（0=第一组4张，1=第二组4张）
-let groupIndex = 0;
-let perView = 4;
-let cardWidth = 0;
-
-//渲染全部卡片
-function renderCarousel(){
-    const track = document.getElementById('carouselTrack');
+// 分页配置：每页4条
+const PAGE_SIZE = 4;
+let currentPage = 1;
+// 渲染当前页
+function renderCurrentPage(){
+    const wrap = document.getElementById('pageMemberWrap');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const pageTip = document.getElementById('pageTip');
+    const total = members.length;
+    const totalPage = Math.ceil(total / PAGE_SIZE);
+    //边界保护
+    if(currentPage < 1) currentPage = 1;
+    if(currentPage > totalPage) currentPage = totalPage;
+    //切片当前页数据
+    const startIndex = (currentPage - 1) * PAGE_SIZE;
+    const pageData = members.slice(startIndex, startIndex + PAGE_SIZE);
+    //渲染卡片模板，根据canFlip追加no‑flip类
     const tpl = (item)=>`
-    <div class="carousel-item">
-        <div class="member-small-card gold-border rounded-md overflow-hidden backdrop-blur-sm w-[280px] h-[460px] flex flex-col">
-            <div class="corner-tr-sm"></div>
-            <div class="corner-bl-sm"></div>
-            <div class="relative flex-1 hover-img-wrap">
-                <div class="absolute top-2 left-2 z-10">
-                    <div class="bg-gold/25 border border-gold/50 px-2 py-1 text-xs text-gold">${item.tag}</div>
-                </div>
-                ${item.tip ? `<div class="absolute bottom-2 left-2 text-yellow-300 text-xl font-bold z-10">${item.tip}</div>` : ''}
-                <div class="img-front" style="background-image:url('${item.imgFront}');"></div>
-                <div class="img-back" style="background-image:url('${item.imgBack}');"></div>
+    <div class="member-small-card gold-border rounded-md overflow-hidden backdrop-blur-sm min-h-[460px] flex flex-col">
+        <div class="corner-tr-sm"></div>
+        <div class="corner-bl-sm"></div>
+        <div class="relative flex-1 hover-img-wrap ${item.canFlip ? '' : 'no-flip'}">
+            <div class="absolute top-2 left-2 z-10">
+                <div class="bg-gold/25 border border-gold/50 px-2 py-1 text-xs text-gold">${item.tag}</div>
             </div>
-            <div class="bg-[rgba(14,30,28,0.88)] px-4 py-3 shrink-0">
-                <h4 class="text-lg text-white">${item.name}</h4>
-                <div class="text-cyanText/70 text-sm mt-1">${item.sub}</div>
-                <p class="mt-1 text-xs text-gray-300/70 break-words leading-relaxed">${item.slogan}</p>
-            </div>
+            ${item.tip ? `<div class="absolute bottom-2 left-2 text-yellow-300 text-xl font-bold z-10">${item.tip}</div>` : ''}
+            <div class="img-front" style="background-image:url('${item.imgFront}');"></div>
+            <div class="img-back" style="background-image:url('${item.imgBack}');"></div>
+        </div>
+        <div class="bg-[rgba(14,30,28,0.88)] px-4 py-3 shrink-0">
+            <h4 class="text-lg text-white">${item.name}</h4>
+            <div class="text-cyanText/70 text-sm mt-1">${item.sub}</div>
+            <p class="mt-1 text-xs text-gray-300/70 break-words leading-relaxed">${item.slogan}</p>
         </div>
     </div>
     `;
-    track.innerHTML = members.map(tpl).join('');
-    calcPerView();
-    updateCarouselTransform();
+    wrap.innerHTML = pageData.map(tpl).join('');
+    //控制按钮置灰
+    prevBtn.disabled = currentPage <= 1;
+    nextBtn.disabled = currentPage >= totalPage;
+    pageTip.innerText = `第 ${currentPage} / ${totalPage} 页`;
 }
-
-// 根据屏幕宽度确定一页展示多少张
-function calcPerView(){
-    if(window.innerWidth >= 1024){
-        perView = 4;
-    }else if(window.innerWidth >= 640){
-        perView = 2;
-    }else{
-        perView = 1;
-    }
-    const itemDom = document.querySelector('.carousel-item');
-    if(itemDom){
-        cardWidth = itemDom.offsetWidth + 16;
-    }
-}
-
-// 根据groupIndex计算位移
-function updateCarouselTransform(){
-    const track = document.getElementById('carouselTrack');
-    // 最大组号：总卡片数 - 每页数量
-    const maxGroupIndex = Math.max(0, Math.ceil(members.length / perView) - 1);
-    if(groupIndex > maxGroupIndex) groupIndex = maxGroupIndex;
-    if(groupIndex < 0) groupIndex = 0;
-    const offsetPx = groupIndex * perView * cardWidth;
-    track.style.transform = `translateX(-${offsetPx}px)`;
-}
-
-// 上一组
-function prevSlide(){
-    groupIndex = groupIndex - 1;
-    updateCarouselTransform();
-}
-// 下一组
-function nextSlide(){
-    groupIndex = groupIndex + 1;
-    updateCarouselTransform();
-}
-
 document.addEventListener('DOMContentLoaded',function(){
-    renderCarousel();
-    document.getElementById('prevBtn').addEventListener('click',prevSlide);
-    document.getElementById('nextBtn').addEventListener('click',nextSlide);
-
-    window.addEventListener('resize',()=>{
-        calcPerView();
-        updateCarouselTransform();
-    })
-
+    renderCurrentPage();
+    document.getElementById('prevBtn').addEventListener('click',()=>{
+        currentPage --;
+        renderCurrentPage();
+    });
+    document.getElementById('nextBtn').addEventListener('click',()=>{
+        currentPage ++;
+        renderCurrentPage();
+    });
     // 导航滚动
     const scrollLinks = document.querySelectorAll('.scroll-link');
     scrollLinks.forEach((el)=>{
@@ -709,12 +707,10 @@ document.addEventListener('DOMContentLoaded',function(){
             smoothScrollTo(el.dataset.target);
         })
     })
-
     const backTopBtn = document.getElementById('backTopBtn');
     backTopBtn.addEventListener('click',()=>{
         smoothScrollTo('#hero');
     })
-
     window.addEventListener('scroll',()=>{
         if(window.scrollY > 400){
             backTopBtn.classList.remove('opacity-0','invisible');
@@ -726,6 +722,39 @@ document.addEventListener('DOMContentLoaded',function(){
         checkScrollActive();
     })
     checkScrollActive();
+    //移动端汉堡菜单
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    let mobileMenuDom = null;
+    mobileMenuBtn.addEventListener('click',()=>{
+        if(!mobileMenuDom){
+            mobileMenuDom = document.createElement('div');
+            mobileMenuDom.className = "fixed inset-0 z-[100] bg-black/75 md:hidden";
+            mobileMenuDom.innerHTML = `
+            <div class="w-64 h-full bg-mainDark p-6 flex flex-col gap-6">
+                <div class="text-gold text-xl border-b border-gold/30 pb-3">导航菜单</div>
+                <a data-target="#hero" class="scroll-link text-white hover:text-gold">首页</a>
+                <a data-target="#intro" class="scroll-link text-white hover:text-gold">百业简介</a>
+                <a data-target="#feature" class="scroll-link text-white hover:text-gold">诸业风物</a>
+                <a data-target="#member" class="scroll-link text-white hover:text-gold">群英列册</a>
+                <a data-target="#join" class="scroll-link text-white hover:text-gold">递笺赴阁</a>
+            </div>
+            `;
+            document.body.appendChild(mobileMenuDom);
+            //点击遮罩关闭
+            mobileMenuDom.addEventListener('click',(e)=>{
+                if(e.target === mobileMenuDom) mobileMenuDom.remove();
+            })
+            //菜单内点击跳转后关闭弹窗
+            mobileMenuDom.querySelectorAll('.scroll-link').forEach(item=>{
+                item.addEventListener('click',()=>{
+                    setTimeout(()=>mobileMenuDom.remove(),800)
+                })
+            })
+        }else{
+            mobileMenuDom.remove();
+            mobileMenuDom = null;
+        }
+    })
 })
 </script>
 </body>
