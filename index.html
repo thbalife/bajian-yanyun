@@ -730,8 +730,8 @@ function renderCurrentPage(){
                 <div class="bg-gold/25 border border-gold/50 px-2 py-1 text-xs text-gold">${item.tag}</div>
             </div>
             ${item.tip ? `<div class="absolute bottom-2 left-2 text-yellow-300 text-xl font-bold z-10">${item.tip}</div>` : ''}
-            <div class="img-front" style="background-image:url('${item.imgFront}');"></div>
-            <div class="img-back" style="background-image:url('${item.imgBack}');"></div>
+            <div class="img-front" style="background-image:url(${item.imgFront});"></div>
+            <div class="img-back" style="background-image:url(${item.imgBack});"></div>
         </div>
         <div class="bg-[rgba(14,30,28,0.88)] px-4 py-3 shrink-0">
             <h4 class="text-lg text-white">${item.name}</h4>
