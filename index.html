@@ -106,7 +106,6 @@
             .member-small-card::after { border-bottom: 1.5px solid; border-right: 1.5px solid; }
             .member-small-card .corner-tr-sm { @apply corner-tr; border-top:1.5px solid; border-right:1.5px solid; }
             .member-small-card .corner-bl-sm { @apply corner-bl; border-bottom:1.5px solid; border-left:1.5px solid; }
-
             /* ========== 悬浮淡入淡出替换图片 ========== */
             .hover-img-wrap {
                 position: relative;
@@ -143,7 +142,13 @@
             .hover-img-wrap.no-flip:hover .img-back {
                 opacity:0 !important;
             }
-
+            /* 副社主文字悬浮交互样式 修复特殊字符 */
+            .hover-text-img:hover .text-content {
+                opacity: 0;
+            }
+            .hover-text-img:hover .img-content {
+                opacity: 1;
+            }
             /* 通用区块背景 */
             .section-bg{
                 background: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.65)), var(--bg);
@@ -321,24 +326,24 @@
         </div>
         <div class="grid md:grid-cols-2 gap-6">
             <div class="cardBg gold-border p-6 rounded-md backdrop-blur-sm flex gap-4">
-                <div class="text-3xl text-gold">🏮</div>
+                <div class="text-3xl text-gold">🎑</div>
                 <div>
-                    <h4 class="text-lg text-cyanText">每周俸禄</h4>
-                    <p class="mt-2 text-gray-300/80">每周活跃度最高的社众，可在群内抽奖两张月卡。</p>
+                    <h4 class="text-lg text-cyanText">闲游雅集</h4>
+                    <p class="mt-2 text-gray-300/80">闲暇可相约拍照打卡、风景游历，体验江湖休闲娱乐，结交同好侠友。</p>
                 </div>
             </div>
             <div class="cardBg gold-border p-6 rounded-md backdrop-blur-sm flex gap-4">
                 <div class="text-3xl text-gold">🗺️</div>
                 <div>
                     <h4 class="text-lg text-cyanText">探索领队</h4>
-                    <p class="mt-2 text-gray-300/80">版本更新后可以寻找搭子探索，每天可组织采火大道。</p>
+                    <p class="mt-2 text-gray-300/80">版本更新后可以寻找搭子探索，可自由组织采火大道。</p>
                 </div>
             </div>
             <div class="cardBg gold-border p-6 rounded-md backdrop-blur-sm flex gap-4">
                 <div class="text-3xl text-gold">⚔️</div>
                 <div>
                     <h4 class="text-lg text-cyanText">共赴侠境</h4>
-                    <p class="mt-2 text-gray-300/80">每周一、周二、周五、周日开双十车。周一全天不间断开车。</p>
+                    <p class="mt-2 text-gray-300/80">每周一固定双十开车，周六、周日百业战后补车。</p>
                 </div>
             </div>
             <div class="cardBg gold-border p-6 rounded-md backdrop-blur-sm flex gap-4">
@@ -386,7 +391,7 @@
                         <div class="mx-2 w-2 h-2 rotate-45 bg-gold/60"></div>
                         <div class="h-[1px] bg-gold/40 flex-1"></div>
                     </div>
-                    <p class="text-[2rem] text-gold text-gold-shadow text-center mt-10">无</p>
+                    <p class="text-[2rem] text-gold text-gold-shadow text-center mt-10">愿与诸位同心致远，砥砺共进。</p>
                 </div>
             </div>
         </div>
@@ -397,7 +402,7 @@
             <div class="corner-bl"></div>
             <div class="big-card-inner-grid gap-0">
                 <div class="relative min-h-[420px] bg-gray-800">
-                    <div class="absolute top-3 left-3 bg-gold/25 text-gold px-2 py-1 text-xs z-20">副社主</div>
+                    <div class="absolute top-3 left-3 bg-gold/25 text-gold px-2 py-1 text-xs z-20">顶级黑奴</div>
                     <div class="hover-img-wrap h-full no-flip">
                         <div class="img-front" style="background-image:url(wanlian.png);"></div>
                         <div class="img-back" style="background-image:url('https://picsum.photos/id/1063/800/800');"></div>
@@ -408,13 +413,24 @@
                         <div class="inline-block px-4 py-2 bg-red-800/60 border border-gold/40 rounded text-gold">拔剑的意义</div>
                     </div>
                     <h3 class="text-3xl text-white text-center">綄莲</h3>
-                    <div class="text-gold/80 mt-2 text-center">副社主 · 鸣金影</div>
+                    <div class="text-gold/80 mt-2 text-center">副社主 · 鸣金虹</div>
                     <div class="flex items-center justify-center my-5">
                         <div class="h-[1px] bg-gold/40 flex-1"></div>
                         <div class="mx-2 w-2 h-2 rotate-45 bg-gold/60"></div>
                         <div class="h-[1px] bg-gold/40 flex-1"></div>
                     </div>
-                    <p class="text-[2rem] text-gold text-gold-shadow text-center mt-10">无</p>
+                    <div class="hover-text-img relative mt-10 text-[2rem] text-gold text-gold-shadow text-center min-h-[180px] flex items-center justify-center">
+                        <!-- 默认显示文字 -->
+                        <div class="text-content">爱捡萌新，黑车不断，黑工头子</div>
+                        <div class="img-content absolute inset-0 flex items-end justify-center pb-2 opacity-0 transition-opacity duration-300 pointer-events-none">
+                            <img
+                                src="wanlian-niu.png"
+                                alt="悬浮展示图"
+                                class="object-contain"
+                                style="max-height: 13rem; max-width: 20rem;"
+                            />
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -567,85 +583,125 @@ function checkScrollActive(){
 // canFlip: true=允许悬浮图片翻转；false=禁止悬浮翻转
 const members = [
     {
-        tag:"无",
-        name:"无",
-        sub:"无 · ",
-        slogan:"无",
+        tag:"副社主",
+        name:"白象大骨面",
+        sub:"裂石 · 威 / 牵丝 · 霖",
+        slogan:"",
         tip:"",
-        imgFront:"https://picsum.photos/id/1070/600/600",
-        imgBack:"https://picsum.photos/id/1071/600/600",
+        imgFront:"baixiang.png",
+        imgBack:"baixiang-1.jpg",
         canFlip: true
     },
     {
-        tag:"无",
-        name:"无",
-        sub:"无 · ",
-        slogan:"无",
+        tag:"香主",
+        name:"借月一千星",
+        sub:"裂石 · 钧 / 鸣金 · 虹",
+        slogan:"",
         tip:"",
-        imgFront:"https://picsum.photos/id/1072/600/600",
-        imgBack:"https://picsum.photos/id/1073/600/600",
+        imgFront:"jieyue.jpg",
+        imgBack:"",
         canFlip: false
     },
     {
-        tag:"无",
-        name:"无",
-        sub:"无 · ",
-        slogan:"无",
+        tag:"战力TOP1",
+        name:"萌小凡",
+        sub:"裂石 · 钧 ",
+        slogan:"",
         tip:"",
-        imgFront:"https://picsum.photos/id/1074/600/600",
-        imgBack:"https://picsum.photos/id/1075/600/600",
-        canFlip: true
-    },
-    {
-        tag:"无",
-        name:"无",
-        sub:"无 · ",
-        slogan:"无",
-        tip:"",
-        imgFront:"https://picsum.photos/id/1076/600/600",
-        imgBack:"https://picsum.photos/id/1077/600/600",
+        imgFront:"xiaofan.png",
+        imgBack:"",
         canFlip: false
     },
     {
-        tag:"无",
-        name:"无",
-        sub:"无 · ",
-        slogan:"无",
+        tag:"咸鱼",
+        name:"祈秋秋",
+        sub:"裂石 · 钧",
+        slogan:"",
         tip:"",
-        imgFront:"https://picsum.photos/id/1078/600/600",
-        imgBack:"https://picsum.photos/id/1079/600/600",
-        canFlip: true
-    },
-    {
-        tag:"无",
-        name:"无",
-        sub:"无 · ",
-        slogan:"无",
-        tip:"",
-        imgFront:"https://picsum.photos/id/1079/600/600",
-        imgBack:"https://picsum.photos/id/1080/600/600",
-        canFlip: true
-    },
-    {
-        tag:"无",
-        name:"无",
-        sub:"无 · ",
-        slogan:"无",
-        tip:"",
-        imgFront:"https://picsum.photos/id/1081/600/600",
-        imgBack:"https://picsum.photos/id/1082/600/600",
+        imgFront:"qiuqiu.png",
+        imgBack:"",
         canFlip: false
     },
     {
-        tag:"无",
-        name:"无",
-        sub:"无 · ",
-        slogan:"无",
+        tag:"牛牛大王",
+        name:"拉粑粑小魅牛",
+        sub:"破竹 · 鸢",
+        slogan:"",
         tip:"",
-        imgFront:"https://picsum.photos/id/1083/600/600",
-        imgBack:"https://picsum.photos/id/1084/600/600",
+        imgFront:"niuniu.jpg",
+        imgBack:"niuniu-1.jpg",
         canFlip: true
-    }
+    },
+    {
+        tag:"副香主",
+        name:"虞星璇",
+        sub:"鸣金 · 虹 ",
+        slogan:"",
+        tip:"",
+        imgFront:"xingxing.jpg",
+        imgBack:"",
+        canFlip: false
+    },
+    {
+        tag:"大霸王",
+        name:"仙女安",
+        sub:"裂石 · 霖",
+        slogan:"",
+        tip:"",
+        imgFront:"dabawang.png",
+        imgBack:"dabawang-1.png",
+        canFlip: true
+    },
+    {
+        tag:"最美“摄影师”",
+        name:"屠衣",
+        sub:"鸣金 · 虹",
+        slogan:"",
+        tip:"",
+        imgFront:"tuyi.jpg",
+        imgBack:"",
+        canFlip: false
+    },
+    {
+        tag:"白纸扇",
+        name:"截明",
+        sub:"裂石 · 钧 ",
+        slogan:"",
+        tip:"",
+        imgFront:"jieming.png",
+        imgBack:"",
+        canFlip: false
+    },
+    {
+        tag:"副香主",
+        name:"云小摆",
+        sub:"牵丝 · 霖 ",
+        slogan:"",
+        tip:"",
+        imgFront:"yunxiaobai.jpg",
+        imgBack:"",
+        canFlip: false
+    },
+    {
+        tag:"白纸扇",
+        name:"荼小七",
+        sub:"牵丝 · 霖 ",
+        slogan:"",
+        tip:"",
+        imgFront:"xiaoqi.png",
+        imgBack:"",
+        canFlip: false
+    },
+    {
+        tag:"结缘神",
+        name:"惊逐雪",
+        sub:" ·  ",
+        slogan:"",
+        tip:"",
+        imgFront:"jingzhuxue.png",
+        imgBack:"",
+        canFlip: false
+    },
 ];
 // 分页配置：每页4条
 const PAGE_SIZE = 4;
