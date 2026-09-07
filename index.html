@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -205,7 +206,71 @@
             --bg: var(--bg-join);
             @apply section-bg;
         }
-    </style>
+    
+        /* ========== 背景音乐播放器样式 ========== */
+        #musicPlayer {
+            position: fixed;
+            bottom: 6rem;
+            right: 1.5rem;
+            z-index: 50;
+        }
+        #musicBtn {
+            width: 3rem;
+            height: 3rem;
+            border: 1px solid rgba(212,184,120,0.45);
+            box-shadow: 0 0 12px rgba(212,184,120,0.12);
+            background: rgba(14,30,28,0.75);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #d4b878;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+        #musicBtn:hover {
+            background: rgba(212,184,120,0.25);
+            box-shadow: 0 0 20px rgba(212,184,120,0.3);
+            transform: scale(1.05);
+        }
+        #musicBtn.playing {
+            animation: musicPulse 2s infinite;
+        }
+        @keyframes musicPulse {
+            0% { box-shadow: 0 0 0 0 rgba(212,184,120,0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(212,184,120,0); }
+            100% { box-shadow: 0 0 0 0 rgba(212,184,120,0); }
+        }
+        #musicTooltip {
+            position: absolute;
+            bottom: calc(100% + 0.5rem);
+            right: 0;
+            padding: 0.25rem 0.75rem;
+            background: rgba(14,30,28,0.9);
+            border: 1px solid rgba(212,184,120,0.45);
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            color: #d4b878;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+        #musicPlayer:hover #musicTooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+        .fa-spin-custom {
+            animation: faSpin 3s infinite linear;
+        }
+        @keyframes faSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+</style>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -518,6 +583,18 @@
         <p class="text-center mt-8 text-gray-400 text-sm">欲入社者，可添加社主或副社主微信，添加时备注“流派、ID”。</p>
     </div>
 </section>
+
+<!-- ========== 背景音乐播放器 ========== -->
+<div id="musicPlayer">
+    <button id="musicBtn" title="点击播放/暂停背景音乐">
+        <i class="fa fa-music" id="musicIcon"></i>
+    </button>
+    <div id="musicTooltip">点击播放背景音乐</div>
+</div>
+<audio id="bgMusic" loop preload="auto">
+    <source src="bgm.mp3" type="audio/mpeg">
+    您的浏览器不支持音频播放，请升级浏览器。
+</audio>
 <!-- 返回顶部按钮 -->
 <div class="fixed right-6 bottom-6 opacity-0 invisible transition-all duration-300" id="backTopBtn">
     <div class="w-12 h-12 gold-border bg-mainDark/70 flex items-center justify-center text-gold text-xl rounded hover:bg-gold/20 transition-all cursor-pointer">
@@ -812,6 +889,75 @@ document.addEventListener('DOMContentLoaded',function(){
         }
     })
 })
+
+    // ========== 背景音乐播放器逻辑 ==========
+    const bgMusic = document.getElementById('bgMusic');
+    const musicBtn = document.getElementById('musicBtn');
+    const musicIcon = document.getElementById('musicIcon');
+    const musicTooltip = document.getElementById('musicTooltip');
+    let isPlaying = false;
+    let hasScrolled = false;
+
+    /** 更新播放器图标和提示文字 */
+    function updateMusicUI() {
+        if (isPlaying) {
+            musicIcon.className = 'fa fa-music fa-spin-custom';
+            musicBtn.classList.add('playing');
+            musicTooltip.textContent = '背景音乐播放中 - 点击暂停';
+        } else {
+            musicIcon.className = 'fa fa-music';
+            musicBtn.classList.remove('playing');
+            musicTooltip.textContent = hasScrolled ? '点击继续播放' : '点击播放背景音乐';
+        }
+    }
+
+    /** 切换播放/暂停 */
+    function toggleMusic() {
+        if (isPlaying) {
+            bgMusic.pause();
+            isPlaying = false;
+        } else {
+            const playPromise = bgMusic.play();
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    isPlaying = true;
+                }).catch(err => {
+                    console.log('播放被阻止:', err);
+                    musicTooltip.textContent = '请再次点击播放';
+                    isPlaying = false;
+                });
+            }
+            isPlaying = true;
+        }
+        updateMusicUI();
+    }
+
+    /** 点击按钮切换 */
+    musicBtn.addEventListener('click', toggleMusic);
+
+    /** 页面滚动时尝试自动播放（仅触发一次） */
+    window.addEventListener('scroll', function onFirstScroll() {
+        if (!hasScrolled && !isPlaying) {
+            hasScrolled = true;
+            const playPromise = bgMusic.play();
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    isPlaying = true;
+                    updateMusicUI();
+                }).catch(err => {
+                    console.log('自动播放被浏览器拦截，等待用户点击:', err);
+                    isPlaying = false;
+                    updateMusicUI();
+                });
+            }
+        }
+    });
+
+    /** 音频播放结束/错误处理 */
+    bgMusic.addEventListener('error', () => {
+        console.warn('音频文件加载失败，请检查 bgm.mp3 路径是否正确');
+        musicTooltip.textContent = '音频文件未找到';
+    });
 </script>
 </body>
 </html>
