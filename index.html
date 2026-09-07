@@ -656,6 +656,7 @@ function checkScrollActive(){
         setNavActive(activeIdx);
     }
 }
+
 // ========== 普通成员配置数组，新增成员只需要在这里加对象 ==========
 // canFlip: true=允许悬浮图片翻转；false=禁止悬浮翻转
 const members = [
@@ -823,6 +824,7 @@ function renderCurrentPage(){
     nextBtn.disabled = currentPage >= totalPage;
     pageTip.innerText = `第 ${currentPage} / ${totalPage} 页`;
 }
+
 document.addEventListener('DOMContentLoaded',function(){
     renderCurrentPage();
     document.getElementById('prevBtn').addEventListener('click',()=>{
@@ -833,17 +835,26 @@ document.addEventListener('DOMContentLoaded',function(){
         currentPage ++;
         renderCurrentPage();
     });
-    // 导航滚动
-    const scrollLinks = document.querySelectorAll('.scroll-link');
-    scrollLinks.forEach((el)=>{
-        el.addEventListener('click',()=>{
-            smoothScrollTo(el.dataset.target);
-        })
+
+    // ========== 使用事件委托：统一处理所有 .scroll-link（包含动态生成的移动端菜单） ==========
+    document.body.addEventListener('click', function(e){
+        const linkEl = e.target.closest('.scroll-link');
+        if(!linkEl) return;
+        e.preventDefault();
+        const target = linkEl.dataset.target;
+        smoothScrollTo(target);
+        // 如果是移动端菜单内点击，则直接关闭菜单
+        const mobileMenuDom = document.querySelector('.fixed.z-\\[100\\]');
+        if(mobileMenuDom){
+            mobileMenuDom.remove();
+        }
     })
+
     const backTopBtn = document.getElementById('backTopBtn');
     backTopBtn.addEventListener('click',()=>{
         smoothScrollTo('#hero');
     })
+
     window.addEventListener('scroll',()=>{
         if(window.scrollY > 400){
             backTopBtn.classList.remove('opacity-0','invisible');
@@ -855,6 +866,7 @@ document.addEventListener('DOMContentLoaded',function(){
         checkScrollActive();
     })
     checkScrollActive();
+
     //移动端汉堡菜单
     const mobileMenuBtn = document.getElementById('mobileMenuBtn');
     let mobileMenuDom = null;
@@ -875,13 +887,10 @@ document.addEventListener('DOMContentLoaded',function(){
             document.body.appendChild(mobileMenuDom);
             //点击遮罩关闭
             mobileMenuDom.addEventListener('click',(e)=>{
-                if(e.target === mobileMenuDom) mobileMenuDom.remove();
-            })
-            //菜单内点击跳转后关闭弹窗
-            mobileMenuDom.querySelectorAll('.scroll-link').forEach(item=>{
-                item.addEventListener('click',()=>{
-                    setTimeout(()=>mobileMenuDom.remove(),800)
-                })
+                if(e.target === mobileMenuDom) {
+                    mobileMenuDom.remove();
+                    mobileMenuDom = null;
+                }
             })
         }else{
             mobileMenuDom.remove();
@@ -890,74 +899,70 @@ document.addEventListener('DOMContentLoaded',function(){
     })
 })
 
-    // ========== 背景音乐播放器逻辑 ==========
-    const bgMusic = document.getElementById('bgMusic');
-    const musicBtn = document.getElementById('musicBtn');
-    const musicIcon = document.getElementById('musicIcon');
-    const musicTooltip = document.getElementById('musicTooltip');
-    let isPlaying = false;
-    let hasScrolled = false;
-
-    /** 更新播放器图标和提示文字 */
-    function updateMusicUI() {
-        if (isPlaying) {
-            musicIcon.className = 'fa fa-music fa-spin-custom';
-            musicBtn.classList.add('playing');
-            musicTooltip.textContent = '背景音乐播放中 - 点击暂停';
-        } else {
-            musicIcon.className = 'fa fa-music';
-            musicBtn.classList.remove('playing');
-            musicTooltip.textContent = hasScrolled ? '点击继续播放' : '点击播放背景音乐';
+// ========== 背景音乐播放器逻辑 ==========
+const bgMusic = document.getElementById('bgMusic');
+const musicBtn = document.getElementById('musicBtn');
+const musicIcon = document.getElementById('musicIcon');
+const musicTooltip = document.getElementById('musicTooltip');
+let isPlaying = false;
+let hasScrolled = false;
+/** 更新播放器图标和提示文字 */
+function updateMusicUI() {
+    if (isPlaying) {
+        musicIcon.className = 'fa fa-music fa-spin-custom';
+        musicBtn.classList.add('playing');
+        musicTooltip.textContent = '背景音乐播放中 - 点击暂停';
+    } else {
+        musicIcon.className = 'fa fa-music';
+        musicBtn.classList.remove('playing');
+        musicTooltip.textContent = hasScrolled ? '点击继续播放' : '点击播放背景音乐';
+    }
+}
+/** 切换播放/暂停 */
+function toggleMusic() {
+    if (isPlaying) {
+        bgMusic.pause();
+        isPlaying = false;
+    } else {
+        const playPromise = bgMusic.play();
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                isPlaying = true;
+            }).catch(err => {
+                console.log('播放被阻止:', err);
+                musicTooltip.textContent = '请再次点击播放';
+                isPlaying = false;
+            });
+        }
+        isPlaying = true;
+    }
+    updateMusicUI();
+}
+/** 点击按钮切换 */
+musicBtn.addEventListener('click', toggleMusic);
+/** 页面滚动时尝试自动播放（仅触发一次） */
+window.addEventListener('scroll', function onFirstScroll() {
+    if (!hasScrolled && !isPlaying) {
+        hasScrolled = true;
+        const playPromise = bgMusic.play();
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                isPlaying = true;
+                updateMusicUI();
+            }).catch(err => {
+                console.log('自动播放被浏览器拦截，等待用户点击:', err);
+                isPlaying = false;
+                updateMusicUI();
+            });
         }
     }
-
-    /** 切换播放/暂停 */
-    function toggleMusic() {
-        if (isPlaying) {
-            bgMusic.pause();
-            isPlaying = false;
-        } else {
-            const playPromise = bgMusic.play();
-            if (playPromise !== undefined) {
-                playPromise.then(() => {
-                    isPlaying = true;
-                }).catch(err => {
-                    console.log('播放被阻止:', err);
-                    musicTooltip.textContent = '请再次点击播放';
-                    isPlaying = false;
-                });
-            }
-            isPlaying = true;
-        }
-        updateMusicUI();
-    }
-
-    /** 点击按钮切换 */
-    musicBtn.addEventListener('click', toggleMusic);
-
-    /** 页面滚动时尝试自动播放（仅触发一次） */
-    window.addEventListener('scroll', function onFirstScroll() {
-        if (!hasScrolled && !isPlaying) {
-            hasScrolled = true;
-            const playPromise = bgMusic.play();
-            if (playPromise !== undefined) {
-                playPromise.then(() => {
-                    isPlaying = true;
-                    updateMusicUI();
-                }).catch(err => {
-                    console.log('自动播放被浏览器拦截，等待用户点击:', err);
-                    isPlaying = false;
-                    updateMusicUI();
-                });
-            }
-        }
-    });
-
-    /** 音频播放结束/错误处理 */
-    bgMusic.addEventListener('error', () => {
-        console.warn('音频文件加载失败，请检查 bgm.mp3 路径是否正确');
-        musicTooltip.textContent = '音频文件未找到';
-    });
+});
+/** 音频播放结束/错误处理 */
+bgMusic.addEventListener('error', () => {
+    console.warn('音频文件加载失败，请检查 bgm.mp3 路径是否正确');
+    musicTooltip.textContent = '音频文件未找到';
+});
 </script>
+
 </body>
 </html>
